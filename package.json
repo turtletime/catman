@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "watch": "watchify lib/game.js -d -o build/main.js",
+    "watch": "watchify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
     "start": "ecstatic"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babelify": "^7.3.0",
     "browserify": "^13.3.0",
     "ecstatic": "^2.1.0",
     "lodash": "^4.17.4",
