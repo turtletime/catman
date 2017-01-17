@@ -4,11 +4,12 @@
       "name": "start",
       "entities": [
         {
-          "name": "catman",
+          "def": "catman",
           "x": 30,
-          "y": 30
+          "y": 30,
+          "tags": [ "player" ]
         }, {
-          "name": "fatman",
+          "def": "fatman",
           "x": 50,
           "y": 50
         }
@@ -35,17 +36,47 @@
       "name": "second",
       "entities": [
         {
-          "name": "catman",
+          "def": "catman",
           "x": 30,
-          "y": 30
+          "y": 30,
+          "tags": [ "player" ]
         }, {
-          "name": "h-tree-1",
+          "def": "catman",
+          "x": 100,
+          "y": 70,
+          "flavorText": [
+            "We've been expecting you."
+          ]
+        }, {
+          "def": "catman",
+          "x": 100,
+          "y": 90,
+          "flavorText": [
+            "There have been reports of several robberies in the area."
+          ]
+        }, {
+          "def": "catman",
+          "x": 100,
+          "y": 110,
+          "flavorText": [
+            "We're down to two trees now."
+          ]
+        }, {
+          "def": "h-tree-1",
           "x": 50,
-          "y": 50
+          "y": 50,
+          "flavorText": [
+            "You touch the tree.",
+            "You suddenly feel an urge to talk to the three fellows standing in a line,",
+            "making sure to address them in the order of their distance from you."
+          ]
         }, {
-          "name": "h-tree-2",
+          "def": "h-tree-2",
           "x": 150,
-          "y": 200
+          "y": 200,
+          "flavorText": [
+            "The third fellow was right. There are only two trees."
+          ]
         }
       ],
       "perimeters": [
@@ -71,8 +102,7 @@
     {
       "name": "catman",
       "width": 8,
-      "height": 8,
-      "tags": [ "player" ]
+      "height": 8
     }, {
       "name": "fatman",
       "width": 20,
@@ -85,17 +115,11 @@
     }, {
       "name": "h-tree-1",
       "width": 25,
-      "height": 16,
-      "flavorText": [
-        "tree #1"
-      ]
+      "height": 16
     }, {
       "name": "h-tree-2",
       "width": 22,
-      "height": 13,
-      "flavorText": [
-        "tree #2"
-      ]
+      "height": 13
     }
   ]
 }
