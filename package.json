@@ -14,6 +14,7 @@
     "browserify": "^13.3.0",
     "ecstatic": "^2.1.0",
     "lodash": "^4.17.4",
+    "pixi-display": "^1.0.1",
     "pixi.js": "^4.3.2",
     "watchify": "^3.8.0"
   }
