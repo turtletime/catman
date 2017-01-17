@@ -27,6 +27,41 @@
           "y": 50,
           "width": 10,
           "height": 10,
+          "dest": "second"
+        }
+      ]
+    },
+    {
+      "name": "second",
+      "entities": [
+        {
+          "name": "catman",
+          "x": 30,
+          "y": 30
+        }, {
+          "name": "h-tree-1",
+          "x": 50,
+          "y": 50
+        }, {
+          "name": "h-tree-2",
+          "x": 150,
+          "y": 200
+        }
+      ],
+      "perimeters": [
+        {
+          "x": 100,
+          "y": 100,
+          "width": 200,
+          "height": 400
+        }
+      ],
+      "exits": [
+        {
+          "x": 0,
+          "y": 50,
+          "width": 10,
+          "height": 10,
           "dest": "start"
         }
       ]
@@ -46,6 +81,20 @@
         "a big blue square! wow",
         "though as you look closer",
         "it appears to be just a normal big cyan square instead"
+      ]
+    }, {
+      "name": "h-tree-1",
+      "width": 25,
+      "height": 16,
+      "flavorText": [
+        "tree #1"
+      ]
+    }, {
+      "name": "h-tree-2",
+      "width": 22,
+      "height": 13,
+      "flavorText": [
+        "tree #2"
       ]
     }
   ]
