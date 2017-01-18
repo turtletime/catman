@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "watch": "watchify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
+    "build": "browserify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
     "start": "ecstatic"
   },
   "author": "",
