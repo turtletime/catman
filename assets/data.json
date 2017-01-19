@@ -15,12 +15,10 @@
           "def": "fatman",
           "x": 50,
           "y": 50,
-          "onInteraction": [
-            {
-              "controller": "dialog",
-              "args": "We've been expecting you."
-            }
-          ]
+          "onInteraction": {
+            "action": "dialog",
+            "args": "A fat man."
+          }
         }
       ],
       "perimeters": [
@@ -57,7 +55,7 @@
           "x": 100,
           "y": 70,
           "onInteraction": {
-            "controller": "dialog",
+            "action": "dialog",
             "args": "We've been expecting you."
           }
         },
@@ -65,35 +63,41 @@
           "def": "catman",
           "x": 100,
           "y": 90,
-          "flavorText": [
-            "There have been reports of several robberies in the area."
-          ]
+          "onInteraction": {
+            "action": "dialog",
+            "args": "There have been reports of several robberies in the area."
+          }
         },
         {
           "def": "catman",
           "x": 100,
           "y": 110,
-          "flavorText": [
-            "We're down to two trees now."
-          ]
+          "onInteraction": {
+            "action": "dialog",
+            "args": "We're down to two trees now."
+          }
         },
         {
           "def": "h-tree-1",
           "x": 50,
           "y": 50,
-          "flavorText": [
-            "You touch the tree.",
-            "You suddenly feel an urge to talk to the three fellows standing in a line,",
-            "making sure to address them in the order of their distance from you."
-          ]
+          "onInteraction": {
+            "action": "dialog",
+            "args": [[
+              "You touch the tree.",
+              "You suddenly feel an urge to talk to the three fellows standing in a line,",
+              "making sure to address them in the order of their distance from you."
+            ]]
+          }
         },
         {
           "def": "h-tree-2",
           "x": 150,
           "y": 200,
-          "flavorText": [
-            "The third fellow was right. There are only two trees."
-          ]
+          "onInteraction": {
+            "action": "dialog",
+            "args": "The third fellow was right. There are only two trees."
+          }
         }
       ],
       "perimeters": [
@@ -124,12 +128,7 @@
     {
       "name": "fatman",
       "width": 20,
-      "height": 20,
-      "flavorText": [
-        "a big blue square! wow",
-        "though as you look closer",
-        "it appears to be just a normal big cyan square instead"
-      ]
+      "height": 20
     },
     {
       "name": "h-tree-1",

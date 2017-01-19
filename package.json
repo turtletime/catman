@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "watch": "watchify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
-    "build": "browserify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
+    "watch": "mkdir -p build; watchify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
+    "build": "mkdir -p build; browserify lib/game.js -d -o build/main.js -t [ babelify --plugins transform-async-to-generator ]",
     "start": "ecstatic"
   },
   "author": "",
