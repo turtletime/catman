@@ -121,22 +121,22 @@
   ],
   "entities": [
     {
-      "name": "catman",
+      "id": "catman",
       "width": 8,
       "height": 8
     },
     {
-      "name": "fatman",
+      "id": "fatman",
       "width": 20,
       "height": 20
     },
     {
-      "name": "h-tree-1",
+      "id": "h-tree-1",
       "width": 25,
       "height": 16
     },
     {
-      "name": "h-tree-2",
+      "id": "h-tree-2",
       "width": 22,
       "height": 13
     }
