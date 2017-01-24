@@ -36,6 +36,13 @@
           "width": 10,
           "height": 10,
           "dest": "second"
+        },
+        {
+          "x": 0,
+          "y": 50,
+          "width": 10,
+          "height": 10,
+          "dest": "town"
         }
       ]
     },
@@ -117,6 +124,30 @@
           "dest": "start"
         }
       ]
+    },
+    {
+      "name": "town",
+      "entities": [
+        {
+          "def": "catman",
+          "x": 0,
+          "y": 0,
+          "tags": [
+            "player"
+          ]
+        }
+      ],
+      "perimeters": [
+        {
+          "x": 300,
+          "y": 0,
+          "width": 800,
+          "height": 400
+        }
+      ],
+      "exits": [
+        
+      ]
     }
   ],
   "entities": [
@@ -139,6 +170,31 @@
       "id": "h-tree-2",
       "width": 22,
       "height": 13
+    },
+    {
+      "id": "h-store",
+      "width": 47,
+      "height": 29
+    },
+    {
+      "id": "h-home",
+      "width": 109,
+      "height": 40
+    },
+    {
+      "id": "h-diner",
+      "width": 96,
+      "height": 21
+    },
+    {
+      "id": "h-firehouse",
+      "width": 102,
+      "height": 24
+    },
+    {
+      "id": "h-dogs",
+      "width": 122,
+      "height": 28
     }
   ]
 }
