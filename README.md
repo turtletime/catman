@@ -10,7 +10,8 @@ Made with [Pixi.js](http://www.pixijs.com) with [Node.js](https://nodejs.org) + 
 git clone https://github.com/turtletime/catman
 cd catman
 npm install
-npm start & npm run watch
+npm start
 ```
 
-Go to `http://localhost:8000`. It may take a while (wait up to one minute)
+The above script uses [Electron](http://electron.atom.io) to launch the game window.
+It doesn't work on Windows, though a small amount of work will do it.
