@@ -199,5 +199,40 @@
       "width": 122,
       "height": 28
     }
+  ],
+  "assets": [
+    {
+      "id": "catman",
+      "columns": 3,
+      "rows": 4,
+      "animations": [
+        {
+          "id": "idle",
+          "frames": {
+            "down": [0],
+            "left": [3],
+            "right": [6],
+            "up": [9]
+          }
+        },
+        {
+          "id": "walking",
+          "ticksPerFrame": 10,
+          "frames": {
+            "down": [0, 1, 0, 2],
+            "left": [3, 4, 3, 5],
+            "right": [6, 7, 6, 8],
+            "up": [9, 10, 9, 11]
+          }
+        }
+      ]
+    },
+    { "id": "h-diner" },
+    { "id": "h-dogs" },
+    { "id": "h-firehouse" },
+    { "id": "h-home" },
+    { "id": "h-store" },
+    { "id": "h-tree-1" },
+    { "id": "h-tree-2" }
   ]
 }
