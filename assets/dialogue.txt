@@ -22,4 +22,6 @@
     - I feel like I just got punched in the solar plexus...
     - Is this what friendship is?
   > (Take his hat off)
+    * fade-out-transition 0.5 8
+    * fade-in-transition 0.5 8
     - (Another hat grows on top of him.)
