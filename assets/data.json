@@ -12,6 +12,15 @@
           ]
         },
         {
+          "def": "catman",
+          "x": 80,
+          "y": 90,
+          "onInteraction": {
+            "action": "run-dialogue",
+            "args": "frendo"
+          }
+        },
+        {
           "def": "fatman",
           "x": 50,
           "y": 50,
