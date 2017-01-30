@@ -1,0 +1,7 @@
+# fatman
+- Life is tough as a blue square!
+  > yes
+    - What do you know about being a blue square?
+  > no
+    - You dare deny me? Get lost!
+- Life is tough as a blue square!

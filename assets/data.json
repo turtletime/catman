@@ -16,11 +16,8 @@
           "x": 50,
           "y": 50,
           "onInteraction": {
-            "action": "dialog",
-            "args": {
-              "text": "A fat man.",
-              "response": [ "yes", "no" ]
-            }
+            "action": "run-dialogue",
+            "args": "fatman"
           }
         }
       ],
