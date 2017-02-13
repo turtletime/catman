@@ -1,209 +1,95 @@
 {
+  "player": {
+    "def": "catman",
+    "tags": [
+      "player"
+    ]
+  },
   "rooms": [
     {
       "name": "start",
       "entities": [
         {
-          "def": "catman",
-          "x": 30,
-          "y": 30,
-          "tags": [
-            "player"
-          ]
+          "name": "start",
+          "position": { "x": 10, "y": 10 },
+          "tags": [ "no-collide" ]
         },
         {
+          "name": "catman",
           "def": "catman",
-          "x": 80,
-          "y": 90,
-          "onInteraction": {
-            "action": "run-dialogue",
-            "args": "frendo"
+          "position": { "x": 50, "y": 90 },
+          "events": {
+            "interact": [
+              { "action": "run-dialogue", "args": "frendo" }
+            ]
           }
         },
         {
-          "def": "fatman",
-          "x": 50,
-          "y": 50,
-          "onInteraction": {
-            "action": "run-dialogue",
-            "args": "fatman"
+          "name": "invisible wall",
+          "position": { "x": 95, "y": 50 },
+          "size": { "w": 10, "h": 100 },
+          "events": {
+            "collide": [
+              { "action": "dialog", "args": [[
+                "Your shoelaces seem to dislike walking past this point.",
+                "They make you aware of this fact by coming untied.",
+                "It'd be dangerous to walk like this, so you have no choice but to turn back."
+              ]]},
+              { "action": "player-walk", "args": [ -15, 0 ] }
+            ]
           }
-        }
-      ],
-      "perimeters": [
-        {
-          "x": 50,
-          "y": 50,
-          "width": 100,
-          "height": 100
-        }
-      ],
-      "exits": [
-        {
-          "x": 100,
-          "y": 50,
-          "width": 10,
-          "height": 10,
-          "dest": "second"
-        },
-        {
-          "x": 0,
-          "y": 50,
-          "width": 10,
-          "height": 10,
-          "dest": "town"
-        }
-      ]
-    },
-    {
-      "name": "second",
-      "entities": [
-        {
-          "def": "catman",
-          "x": 30,
-          "y": 30,
-          "tags": [
-            "player"
-          ]
-        },
-        {
-          "def": "catman",
-          "x": 100,
-          "y": 70,
-          "onInteraction": {
-            "action": "dialog",
-            "args": "We've been expecting you."
-          }
-        },
-        {
-          "def": "catman",
-          "x": 100,
-          "y": 90,
-          "onInteraction": {
-            "action": "dialog",
-            "args": "There have been reports of several robberies in the area."
-          }
-        },
-        {
-          "def": "catman",
-          "x": 100,
-          "y": 110,
-          "onInteraction": {
-            "action": "dialog",
-            "args": "We're down to two trees now."
-          }
-        },
-        {
-          "def": "h-tree-1",
-          "x": 50,
-          "y": 50,
-          "onInteraction": {
-            "action": "dialog",
-            "args": [[
-              "You touch the tree.",
-              "You suddenly feel an urge to talk to the three fellows standing in a line,",
-              "making sure to address them in the order of their distance from you."
-            ]]
-          }
-        },
-        {
-          "def": "h-tree-2",
-          "x": 150,
-          "y": 200,
-          "onInteraction": {
-            "action": "dialog",
-            "args": "The third fellow was right. There are only two trees."
-          }
-        }
-      ],
-      "perimeters": [
-        {
-          "x": 100,
-          "y": 100,
-          "width": 200,
-          "height": 400
-        }
-      ],
-      "exits": [
-        {
-          "x": 0,
-          "y": 50,
-          "width": 10,
-          "height": 10,
-          "dest": "start"
-        }
-      ]
-    },
-    {
-      "name": "town",
-      "entities": [
-        {
-          "def": "catman",
-          "x": 0,
-          "y": 0,
-          "tags": [
-            "player"
-          ]
         }
       ],
       "perimeters": [
         {
           "x": 300,
-          "y": 0,
-          "width": 800,
-          "height": 400
+          "y": 50,
+          "width": 600,
+          "height": 100
         }
-      ],
-      "exits": [
-        
       ]
     }
   ],
   "entities": [
     {
       "id": "catman",
-      "width": 8,
-      "height": 8
+      "asset": "catman",
+      "size": { "w": 8, "h": 8 }
     },
     {
-      "id": "fatman",
-      "width": 20,
-      "height": 20
+      "id": "tree1",
+      "asset": "h-tree-1",
+      "size": { "w": 25, "h": 16 }
     },
     {
-      "id": "h-tree-1",
-      "width": 25,
-      "height": 16
+      "id": "tree2",
+      "asset": "h-tree-2",
+      "size": { "w": 22, "h": 13 }
     },
     {
-      "id": "h-tree-2",
-      "width": 22,
-      "height": 13
+      "id": "store",
+      "asset": "h-store",
+      "size": { "w": 47, "h": 29 }
     },
     {
-      "id": "h-store",
-      "width": 47,
-      "height": 29
+      "id": "home",
+      "asset": "h-home",
+      "size": { "w": 109, "h": 40 }
     },
     {
-      "id": "h-home",
-      "width": 109,
-      "height": 40
+      "id": "diner",
+      "asset": "h-diner",
+      "size": { "w": 96, "h": 21 }
     },
     {
-      "id": "h-diner",
-      "width": 96,
-      "height": 21
+      "id": "firehouse",
+      "asset": "h-firehouse",
+      "size": { "w": 102, "h": 24 }
     },
     {
-      "id": "h-firehouse",
-      "width": 102,
-      "height": 24
-    },
-    {
-      "id": "h-dogs",
-      "width": 122,
-      "height": 28
+      "id": "doghouse",
+      "asset": "h-dogs",
+      "size": { "w": 122, "h": 28 }
     }
   ],
   "assets": [
