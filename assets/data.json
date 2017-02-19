@@ -5,13 +5,22 @@
       "player"
     ]
   },
+  "items": [
+    {
+      "name": "axe",
+      "description": [
+        "An axe.",
+        "Now you just need a creepy mask and a group of unsuspecting teen campers."
+      ]
+    }
+  ],
   "rooms": [
     {
       "name": "start",
       "entities": [
         {
           "name": "start",
-          "position": { "x": 10, "y": 10 },
+          "position": { "x": 40, "y": 10 },
           "tags": [ "no-collide" ]
         },
         {
@@ -27,20 +36,16 @@
         {
           "name": "no good tree",
           "def": "tree2",
-          "position": { "x": 20, "y": 50 },
+          "position": { "x": 120, "y": 50 },
           "events": {
             "interact": [
-              { "action": "dialog", "args": [[
-                "You attempt to chop down the tree.",
-                "You cut like someone who has never cut down a tree before.",
-                "It's obvious to everyone else."
-              ]]}
+              { "action": "run-dialogue", "args": "cut-tree" }
             ]
           }
         },
         {
           "name": "invisible wall",
-          "position": { "x": 95, "y": 50 },
+          "position": { "x": 5, "y": 50 },
           "size": { "w": 10, "h": 100 },
           "events": {
             "collide": [
@@ -49,17 +54,23 @@
                 "They make you aware of this fact by coming untied.",
                 "It'd be dangerous to walk like this, so you have no choice but to turn back."
               ]]},
-              { "action": "player-walk", "args": [ -15, 0 ] }
+              { "action": "player-walk", "args": [ 15, 0 ] }
             ]
           }
         }
       ],
       "perimeters": [
         {
-          "x": 300,
+          "x": 50,
           "y": 50,
-          "width": 600,
+          "width": 100,
           "height": 100
+        },
+        {
+          "x": 125,
+          "y": 50,
+          "width": 75,
+          "height": 16
         }
       ]
     }

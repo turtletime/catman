@@ -1,27 +1,17 @@
-# fatman
-- Life is tough as a blue square!
-  > yes
-    - What do you know about being a blue square?
-    - Life is tough as a blue square!!
-  > no
-    - You dare deny me? Get lost!
-    - Life is tough as a blue square!!
-  > huh?
-    - Pay attention!
-    * run-dialogue fatman
-
 # frendo
 - We're friends, aren't we?
   > Of course!
-    - Best friends?
-      > BEST FRIENDS!
-        - BEST FRIENDS!!!
-      > Woah, slow down...
-        - You're right. Maybe we need to have the same conversation one more time.
+    - Then I'll give you this axe.
+    * obtain-item axe
+    - I bet you're glad we're friends.
   > Who are you again?
-    - I feel like I just got punched in the solar plexus...
-    - Is this what friendship is?
+    - The name's Bone.
+    - James Bone.
   > (Take his hat off)
     * fade-out-transition 0.5 8
     * fade-in-transition 0.5 8
     - (Another hat grows on top of him.)
+
+# cut-tree
+  ! if [get-number 1] == 1
+    - Cut the tree!
