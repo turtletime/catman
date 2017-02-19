@@ -13,5 +13,10 @@
     - (Another hat grows on top of him.)
 
 # cut-tree
-  ! if [get-number 1] == 1
-    - Cut the tree!
+  ! if [count-item axe] == 0
+    - A tree stands in your way.
+  ! else if [count-item axe] == 1
+    - A tree stands in your way.
+    - Good thing you have an axe.
+  ! else
+    - What the hell are you doing with so many axes?
