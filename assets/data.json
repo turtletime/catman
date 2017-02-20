@@ -71,6 +71,12 @@
           "y": 50,
           "width": 75,
           "height": 16
+        },
+        {
+          "x": 200,
+          "y": 0,
+          "width": 150,
+          "height": 140
         }
       ]
     }
@@ -78,46 +84,46 @@
   "entities": [
     {
       "id": "catman",
-      "asset": "catman",
-      "size": { "w": 8, "h": 8 }
+      "size": { "w": 8, "h": 8 },
+      "appearance": { "def": "catman" }
     },
     {
       "id": "tree1",
-      "asset": "h-tree-1",
-      "size": { "w": 25, "h": 16 }
+      "size": { "w": 25, "h": 16 },
+      "appearance": { "def": "h-tree-1" }
     },
     {
       "id": "tree2",
-      "asset": "h-tree-2",
-      "size": { "w": 22, "h": 13 }
+      "size": { "w": 22, "h": 13 },
+      "appearance": { "def": "h-tree-2" }
     },
     {
       "id": "store",
-      "asset": "h-store",
-      "size": { "w": 47, "h": 29 }
+      "size": { "w": 47, "h": 29 },
+      "appearance": { "def": "h-store" }
     },
     {
       "id": "home",
-      "asset": "h-home",
-      "size": { "w": 109, "h": 40 }
+      "size": { "w": 109, "h": 40 },
+      "appearance": { "def": "h-home" }
     },
     {
       "id": "diner",
-      "asset": "h-diner",
-      "size": { "w": 96, "h": 21 }
+      "size": { "w": 96, "h": 21 },
+      "appearance": { "def": "h-diner" }
     },
     {
       "id": "firehouse",
-      "asset": "h-firehouse",
-      "size": { "w": 102, "h": 24 }
+      "size": { "w": 102, "h": 24 },
+      "appearance": { "def": "h-firehouse" }
     },
     {
       "id": "doghouse",
-      "asset": "h-dogs",
-      "size": { "w": 122, "h": 28 }
+      "size": { "w": 122, "h": 28 },
+      "appearance": { "def": "h-dogs" }
     }
   ],
-  "assets": [
+  "sprites": [
     {
       "id": "catman",
       "columns": 3,

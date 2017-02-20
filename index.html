@@ -8,11 +8,20 @@
         }
         </style>
     </head>
-    <body bgcolor="#000000">
+    <body bgcolor="#999999">
         <div id="the-game"></div>
-        <div>
-        <textarea id="editor-text-entry"></textarea>
+        <div id="level-editor-supplement">
         </div>
+        <!--Level editor stuff-->
+        <script src="node_modules/react/dist/react.js"></script>
+        <script src="node_modules/react-dom/dist/react-dom.js"></script>
+        <!--The game-->
+        <script>
+            const _gameWidth = 512
+            const _gameHeight = 512
+        </script>
+        <script src="node_modules/pixi.js/dist/pixi.js"></script>
+        <script src="node_modules/pixi-display/bin/pixi-display.js"></script>
         <script src="build/main.js"></script>
     </body>
 </html>
