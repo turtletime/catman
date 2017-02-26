@@ -68,13 +68,17 @@ class LevelEditor extends React.Component {
 
   onClickRoomName(roomName) {
     if (this.state.selectedRoom && roomName === this.state.selectedRoom.name) {
-      this.props.clearRoom()
+      this.props.gameModule.invoke('clear-room')
       this.setState({
         selectedRoom: null,
         selectedEntity: null
       })
     } else {
-      this.props.clearRoom().then(() => this.props.loadRoom(roomName))
+      this.props.gameModule.invoke('clear-room').then(() => {
+        this.props.gameModule.invoke('load-room', roomName)
+      }).then(() => {
+
+      })
       this.setState({
         selectedRoom: this.props.data.rooms.find(room => room.name === roomName),
         selectedEntity: null
@@ -121,17 +125,11 @@ class LevelEditor extends React.Component {
 
 module.exports = class extends Action {
   async execute() {
-    function loadRoom(roomName) {
-      return this.invoke('load-room', roomName)
-    }
-
-    function clearRoom() {
-      return this.invoke('clear-room')
-    }
-
+    const previouslyEnabledFootprint = !!this.state.footprint
+    await this.invoke('enable-footprints')
     await this.invoke('clear-room')
     ReactDOM.render(
-      <LevelEditor data={this.rom} loadRoom={loadRoom.bind(this)} clearRoom={clearRoom.bind(this)} />,
+      <LevelEditor data={this.rom} gameModule={this} />,
       document.getElementById('level-editor-supplement')
     )
     await this.invoke('wait-on-input', [
@@ -140,5 +138,8 @@ module.exports = class extends Action {
         cb: () => true
       }
     ])
+    if (!previouslyEnabledFootprint) {
+      await this.invoke('disable-footprints')
+    }
   }
 }
