@@ -1,6 +1,7 @@
 const Griddle = require('griddle-react').default
 const { RowDefinition, ColumnDefinition } = require('griddle-react')
 const plugins = require('griddle-react').plugins
+const extend = require('extend')
 
 const inRectangle = require('../util/math-utils.js').inRectangle
 
@@ -72,22 +73,33 @@ class Entity extends React.Component {
           <li><b>Position: </b>
             <InputField
               id="pos-x"
-              type="text"
               value={entity.position.x}
               onChanged={this.props.onChanged}
               width={25}
             />,
             <InputField
               id="pos-y"
-              type="text"
               value={entity.position.y}
+              onChanged={this.props.onChanged}
+              width={25}
+            />
+          </li>
+          <li><b>Size: </b>
+            <InputField
+              id="size-w"
+              value={entity.size.w}
+              onChanged={this.props.onChanged}
+              width={25}
+            />,
+            <InputField
+              id="size-h"
+              value={entity.size.h}
               onChanged={this.props.onChanged}
               width={25}
             />
           </li>
           <li><b>Tags: </b><InputField
             id="tags"
-            type="text"
             value={JSON.stringify(entity.tags, null, 2)}
             onChanged={this.props.onChanged}
             width={100}
@@ -97,7 +109,6 @@ class Entity extends React.Component {
             {Object.keys(displayEvents).map(key => {
               return (<li key={key}>{key}: <InputField
                 id={`event-${key}`}
-                type="text"
                 value={JSON.stringify(displayEvents[key], null, 2)}
                 onChanged={this.props.onChanged}
                 multiline={true}
@@ -199,6 +210,7 @@ class LevelEditor extends React.Component {
   }
 
   onEntityChanged(prop, value) {
+    // TODO Undeniable boilerplate here
     switch (prop) {
       case 'name':
         this.state.selectedEntity.name = value
@@ -221,6 +233,22 @@ class LevelEditor extends React.Component {
           return
         }
         break
+      case 'size-w':
+        const newW = parseInt(value)
+        if (!isNaN(newW)) {
+          this.state.selectedEntity.size.w = newW
+          this.forceUpdate()
+          return
+        }
+        break
+      case 'size-h':
+        const newH = parseInt(value)
+        if (!isNaN(newH)) {
+          this.state.selectedEntity.size.h = newH
+          this.forceUpdate()
+          return
+        }
+        break
       case 'tags':
         try {
           const newTags = JSON.parse(`{"value":${value}}`).value
@@ -229,6 +257,17 @@ class LevelEditor extends React.Component {
           return
         } catch (e) { }
         break
+      default:
+        if (prop.startsWith('event-')) {
+          const eventName = prop.split('-')[1]
+          try {
+            const newEvent = JSON.parse(`{"value":${value}}`).value
+            this.state.selectedEntity.events[eventName] = newEvent
+            this.forceUpdate()
+            return
+          } catch (e) { }
+        }  
+        break  
     }
     this.props.gameModule.logger.warn(`${value}: Not a valid value for ${prop}`)
   }
@@ -237,15 +276,25 @@ class LevelEditor extends React.Component {
     if (!this.state.selectedRoom) {
       return
     } else {
-
-      this.props.gameModule.state.scene.entities
+      const def = this.props.gameModule.rom.entities.find(def => def.id === templateName)
+      if (def) {
+        this.props.gameModule.invoke('create-entity',
+          extend(true, {}, this.props.gameModule.instantiate('entity'), def, { name: templateName })).then(entity => {
+            this.props.gameModule.state.scene.entities.push(entity)
+            this.forceUpdate()
+          })
+      } else {
+        this.props.gameModule.logger.error('Entry in template name doesn\'t exist in ROM')
+      }
     }
   }
 
   onClickSave() {
     // commit to ROM
     this.props.gameModule.invoke('save-room').then(() => {
-      localStorage.setItem('data', JSON.stringify(this.props.gameModule.rom, null, 2))
+      const rom = Object.assign({}, this.props.gameModule.rom)
+      delete rom.dialogue
+      localStorage.setItem('data', JSON.stringify(rom, null, 2))
     }).then(() => {
       console.log('saved')
     })
