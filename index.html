@@ -1,16 +1,23 @@
 <html>
     <head>
+        <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
         <style>
         html, body {
             margin: 0;
             padding: 0;
             border: 0;
+            font-family: 'VT323', monospace;
+        }
+        h1 {
+            font-size: 20;
         }
         </style>
     </head>
     <body bgcolor="#999999">
-        <div id="the-game"></div>
-        <div id="level-editor-supplement"></div>
+        <div style="display: flex">
+            <div id="the-game" style="width: 384"></div>
+            <div id="level-editor-supplement" style="flex: 1"></div>
+        </div>
         <!--Level editor stuff-->
         <script src="node_modules/react/dist/react.js"></script>
         <script src="node_modules/react-dom/dist/react-dom.js"></script>
