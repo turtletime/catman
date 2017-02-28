@@ -5,121 +5,7 @@ const extend = require('extend')
 
 const inRectangle = require('../util/math-utils.js').inRectangle
 
-let highWater = 0
-
-class InputField extends React.Component {
-  constructor(props) {
-    super(props)
-    this.altDown = false
-  }
-
-  onKeyDown(event) {
-    if (event.key === 'Alt') {
-      this.altDown = true
-    } else if (event.key === 'Enter') {
-      if (!this.props.multiline || this.altDown) {
-        this.props.onChanged(this.props.id, event.target.value)
-      }
-    }
-  }
-
-  onKeyUp(event) {
-    if (event.key === 'Alt') {
-      this.altDown = false
-    }
-  }
-
-  render() {
-    return this.props.multiline ? (
-      <textarea
-        id={this.props.id}
-        key={highWater++}
-        defaultValue={this.props.value}
-        onKeyDown={this.onKeyDown.bind(this)}
-        onKeyUp={this.onKeyUp.bind(this)}
-      />
-    ) : (
-        <input
-          id={this.props.id}
-          key={highWater++}
-          style={{ width: this.props.width }}
-          type="text"
-          defaultValue={this.props.value}
-          onKeyDown={this.onKeyDown.bind(this)}
-          onKeyUp={this.onKeyUp.bind(this)}
-        />
-    )
-  }
-}
-
-class Entity extends React.Component {
-  render() {
-    const entity = this.props.data
-    const displayEvents = {
-      interact: entity.events.interact || [],
-      collide: entity.events.collide || []
-    }
-    return (
-      <div>
-        <h1>{`Entity ${entity.name}`}</h1>
-        <ul>
-          <li><b>Name: </b><InputField
-            id="name"
-            type="text"
-            value={entity.name}
-            onChanged={this.props.onChanged}
-            width={100}
-          /></li>
-          <li><b>Position: </b>
-            <InputField
-              id="pos-x"
-              value={entity.position.x}
-              onChanged={this.props.onChanged}
-              width={25}
-            />,
-            <InputField
-              id="pos-y"
-              value={entity.position.y}
-              onChanged={this.props.onChanged}
-              width={25}
-            />
-          </li>
-          <li><b>Size: </b>
-            <InputField
-              id="size-w"
-              value={entity.size.w}
-              onChanged={this.props.onChanged}
-              width={25}
-            />,
-            <InputField
-              id="size-h"
-              value={entity.size.h}
-              onChanged={this.props.onChanged}
-              width={25}
-            />
-          </li>
-          <li><b>Tags: </b><InputField
-            id="tags"
-            value={JSON.stringify(entity.tags, null, 2)}
-            onChanged={this.props.onChanged}
-            width={100}
-          /></li>
-          <li><b>Events:</b></li>
-          <ul>
-            {Object.keys(displayEvents).map(key => {
-              return (<li key={key}>{key}: <InputField
-                id={`event-${key}`}
-                value={JSON.stringify(displayEvents[key], null, 2)}
-                onChanged={this.props.onChanged}
-                multiline={true}
-              /></li>)
-            })}
-          </ul>
-        </ul>
-      </div>
-    )
-  }
-}
+const Entity = require('./entity.jsx')
 
 class LevelEditorList extends React.Component {
   constructor(props) {
@@ -131,13 +17,22 @@ class LevelEditorList extends React.Component {
       <div id={this.props.id}>
         <h1>{this.props.title}</h1>
         <Griddle
-          data={this.props.data.map((item) => ({ name: item[this.props.indexer || 'name'] })) }
+          data={this.props.data.map(id => Object.keys(this.props.controls).reduce((prev, key) => {
+            prev[key] = { display: key, id: id }
+            return prev
+          }, { name: id }))}
           plugins={[plugins.LocalPlugin]}
         >
           <RowDefinition>
-            <ColumnDefinition id="name" customComponent={({value}) =>
-              <a onClick={() => this.props.onClickName(value)}>{value}</a>}
-            />
+            {Object.keys(this.props.controls).map(key => (
+              <ColumnDefinition
+                id={key}
+                key={key}
+                customComponent={({value}) =>
+                  <a onClick={() => this.props.controls[key](value.get('id'))}>[{value.get('display')}]</a>
+                }
+              />
+            )).concat(<ColumnDefinition id="name" />)}
           </RowDefinition>
         </Griddle>
       </div>
@@ -323,14 +218,14 @@ class LevelEditor extends React.Component {
           <LevelEditorList
             title="Rooms"
             id="room-list"
-            data={this.props.gameModule.rom.rooms}
-            onClickName={this.onClickRoomName.bind(this)}
+            data={this.props.gameModule.rom.rooms.map(room => room.name)}
+            controls={{ edit: this.onClickRoomName.bind(this) }}
           />
           {this.state.selectedRoom !== null && <LevelEditorList
             title={`Entities in room "${this.state.selectedRoom.name}"`}
             id="entity-list"
-            data={this.props.gameModule.state.scene.entities}
-            onClickName={this.onClickEntityName.bind(this)}
+            data={this.props.gameModule.state.scene.entities.map(entity => entity.name)}
+            controls={{ edit: this.onClickEntityName.bind(this) }}
           />}
           {this.state.selectedEntity !== null && <Entity
             data={this.state.selectedEntity}
@@ -342,9 +237,8 @@ class LevelEditor extends React.Component {
           <LevelEditorList
             title="Templates"
             id="template-list"
-            data={this.props.gameModule.rom.entities}
-            indexer='id'
-            onClickName={this.onClickTemplateName.bind(this)}
+            data={this.props.gameModule.rom.entities.map(entity => entity.id)}
+            controls={{ add: this.onClickTemplateName.bind(this) }}
           />
         </div>
       </div>
