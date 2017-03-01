@@ -4,6 +4,7 @@ const plugins = require('griddle-react').plugins
 const extend = require('extend')
 
 const inRectangle = require('../util/math-utils.js').inRectangle
+const _ = require('lodash')
 
 const Entity = require('./entity.jsx')
 
@@ -25,17 +26,18 @@ class LevelEditorList extends React.Component {
               <ColumnDefinition
                 id="actions"
                 customComponent={({value}) =>
-                  <div>
-                    [{Object.keys(this.props.controls).map(key => (
-                      <a
-                        key={key}
-                        onClick={() => this.props.controls[key].cb(value)}
-                        style={{ color: this.props.controls[key].color || 'black' }}
-                      >
-                        {key}
-                      </a>
-                    ))}]
-                  </div>
+                  <a>
+                    {Object.keys(this.props.controls).map(key => (
+                      <a key={key}>[
+                        <a
+                          onClick={() => this.props.controls[key].cb(value)}
+                          style={{ color: this.props.controls[key].color || 'black' }}
+                        >
+                          {key}
+                        </a>
+                      ]</a>
+                    ))}
+                  </a>
                 }
               />
           </RowDefinition>
@@ -50,7 +52,8 @@ class LevelEditor extends React.Component {
     super(props)
     this.state = {
       selectedRoom: null,
-      selectedEntity: null
+      selectedEntity: null,
+      message: ''
     }
   }
 
@@ -62,7 +65,8 @@ class LevelEditor extends React.Component {
     if (foundEntity) {
       this.setState(prevState => ({
         selectedRoom: prevState.selectedRoom,
-        selectedEntity: foundEntity
+        selectedEntity: foundEntity,
+        message: ''
       }))
     }
   }
@@ -72,20 +76,28 @@ class LevelEditor extends React.Component {
     if (this.props.gameModule.state.Action.onCursorDown) {
       this.props.gameModule.events.input.removeListener('cursorDown', this.props.gameModule.state.Action.onCursorDown)
       delete this.props.gameModule.state.Action.onCursorDown
-    }  
-    this.props.gameModule.invoke('clear-room').then(() => {
+    }
+    let clear
+    if (this.state.selectedRoom) {
+      this.props.gameModule.invoke('save-room').then(() => this.props.gameModule.invoke('clear-room'))
+    } else {
+      clear = this.props.gameModule.invoke('clear-room')
+    }
+    clear.then(() => {
       //
       if (this.state.selectedRoom && roomName === this.state.selectedRoom.name) {
         this.setState({
           selectedRoom: null,
-          selectedEntity: null
+          selectedEntity: null,
+          message: ''
         })
       } else {
         const that = this
         this.props.gameModule.invoke('load-room', roomName).then(() => {
           this.setState({
             selectedRoom: this.props.gameModule.rom.rooms.find(room => room.name === roomName),
-            selectedEntity: null
+            selectedEntity: null,
+            message: ''
           })
           // make each entity clickable
           this.props.gameModule.state.Action.onCursorDown = this.onCursorDown.bind(this)
@@ -99,12 +111,14 @@ class LevelEditor extends React.Component {
     if (this.state.selectedEntity && entityName === this.state.selectedEntity.name) {
       this.setState({
         selectedRoom: this.state.selectedRoom,
-        selectedEntity: null
+        selectedEntity: null,
+        message: ''
       })
     } else {
       this.setState({
         selectedRoom: this.state.selectedRoom,
-        selectedEntity: this.props.gameModule.state.scene.entities.find(entity => entity.name === entityName)
+        selectedEntity: this.props.gameModule.state.scene.entities.find(entity => entity.name === entityName),
+        message: ''
       })
     }
   }
@@ -113,39 +127,37 @@ class LevelEditor extends React.Component {
     // TODO Undeniable boilerplate here
     switch (prop) {
       case 'name':
-        this.state.selectedEntity.name = value
-        this.forceUpdate()
+        if (this.props.gameModule.state.scene.entities.find(
+          entity => entity.name === value && entity !== this.state.selectedEntity
+        )) {
+          this.setState(prevState => ({
+            selectedRoom: prevState.selectedRoom,
+            selectedEntity: prevState.selectedEntity,
+            message: 'Name collision'
+          }))
+        } else {
+          this.state.selectedEntity.name = value
+          this.setState(prevState => ({
+            selectedRoom: prevState.selectedRoom,
+            selectedEntity: prevState.selectedEntity,
+            message: 'Updated'
+          }))
+        }
         return
         break
-      case 'pos-x':
-        const newX = parseInt(value)
-        if (!isNaN(newX)) {
-          this.state.selectedEntity.position.x = newX
-          this.forceUpdate()
-          return
-        }
-        break
-      case 'pos-y':
-        const newY = parseInt(value)
-        if (!isNaN(newY)) {
-          this.state.selectedEntity.position.y = newY
-          this.forceUpdate()
-          return
-        }
-        break
+      case 'position-x':
+      case 'position-y':
       case 'size-w':
-        const newW = parseInt(value)
-        if (!isNaN(newW)) {
-          this.state.selectedEntity.size.w = newW
-          this.forceUpdate()
-          return
-        }
-        break
-      case 'size-h':
-        const newH = parseInt(value)
-        if (!isNaN(newH)) {
-          this.state.selectedEntity.size.h = newH
-          this.forceUpdate()
+      case 'size-h':  
+        const newValue = parseInt(value)
+        const fields = prop.split('-')
+        if (!isNaN(newValue)) {
+          this.state.selectedEntity[fields[0]][fields[1]] = newValue
+          this.setState(prevState => ({
+            selectedRoom: prevState.selectedRoom,
+            selectedEntity: prevState.selectedEntity,
+            message: 'Updated'
+          }))
           return
         }
         break
@@ -153,7 +165,11 @@ class LevelEditor extends React.Component {
         try {
           const newTags = JSON.parse(`{"value":${value}}`).value
           this.state.selectedEntity.tags = newTags
-          this.forceUpdate()
+          this.setState(prevState => ({
+            selectedRoom: prevState.selectedRoom,
+            selectedEntity: prevState.selectedEntity,
+            message: 'Updated'
+          }))
           return
         } catch (e) { }
         break
@@ -163,13 +179,22 @@ class LevelEditor extends React.Component {
           try {
             const newEvent = JSON.parse(`{"value":${value}}`).value
             this.state.selectedEntity.events[eventName] = newEvent
-            this.forceUpdate()
+            this.setState(prevState => ({
+              selectedRoom: prevState.selectedRoom,
+              selectedEntity: prevState.selectedEntity,
+              message: 'Updated'
+            }))
             return
           } catch (e) { }
-        }  
+        }
         break  
     }
     this.props.gameModule.logger.warn(`${value}: Not a valid value for ${prop}`)
+    this.setState(prevState => ({
+      selectedRoom: prevState.selectedRoom,
+      selectedEntity: prevState.selectedEntity,
+      message: 'Updated'
+    }))
   }
 
   onAddEntity(templateName) {
@@ -193,6 +218,22 @@ class LevelEditor extends React.Component {
       } else {
         game.logger.error('Entry in template name doesn\'t exist in ROM')
       }
+    }
+  }
+
+  onRemoveEntity(entityName) {
+    const game = this.props.gameModule
+    const entity = game.state.scene.entities.find(e => e.name === entityName)
+    if (entity) {
+      _.remove(game.state.scene.entities, e => e === entity)
+      game.invoke('destroy-entity', entity)
+      this.setState(prevState => ({
+        selectedRoom: prevState.selectedRoom,
+        selectedEntity: entity === prevState.selectedEntity ? null : prevState.selectedEntity,
+        message: 'Deleted'
+      }))
+    } else {
+      game.logger.error(`Entity ${entityName} not found`)
     }
   }
 
@@ -240,13 +281,15 @@ class LevelEditor extends React.Component {
             id="entity-list"
             data={this.props.gameModule.state.scene.entities.map(entity => entity.name)}
             controls={{
-              edit: { cb: this.onEditEntity.bind(this), color: 'blue' }
+              edit: { cb: this.onEditEntity.bind(this), color: 'blue' },
+              remove: { cb: this.onRemoveEntity.bind(this), color: 'red' }
             }}
           />}
           {this.state.selectedEntity !== null && <Entity
             data={this.state.selectedEntity}
             onChanged={this.onEntityChanged.bind(this)}
           />}
+          <div id="level-editor-message" style={{ fontSize: 20 }}>{this.state.message}</div>
         </div>
         <div style={{ flexGrow: 1 }}>
           <button onClick={this.onClickSave.bind(this)}>"Save"</button>
@@ -268,7 +311,9 @@ module.exports = class extends Action {
   async execute() {
     const previouslyEnabledFootprint = !!this.state.footprint
     await this.invoke('enable-footprints')
+    const roomName = this.state.scene.room
     await this.invoke('clear-room')
+    await this.invoke('load-room', roomName)
     ReactDOM.render(
       <LevelEditor gameModule={this} />,
       document.getElementById('level-editor-supplement')

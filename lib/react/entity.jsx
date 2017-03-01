@@ -20,13 +20,13 @@ module.exports = class Entity extends React.Component {
           /></li>
           <li><b>Position: </b>
             <InputField
-              id="pos-x"
+              id="position-x"
               value={entity.position.x}
               onChanged={this.props.onChanged}
               width={25}
             />,
             <InputField
-              id="pos-y"
+              id="position-y"
               value={entity.position.y}
               onChanged={this.props.onChanged}
               width={25}
