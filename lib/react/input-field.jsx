@@ -3,6 +3,10 @@ let highWater = 0
 module.exports = class InputField extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      color: 'white'
+    }
+    // TODO maybe remove this  
     this.altDown = false
   }
 
@@ -10,9 +14,16 @@ module.exports = class InputField extends React.Component {
     if (event.key === 'Alt') {
       this.altDown = true
     } else if (event.key === 'Enter') {
-      if (!this.props.multiline || this.altDown) {
-        this.props.onChanged(this.props.id, event.target.value)
+      this.setState({
+        color: 'white'
+      })
+      if (!this.props.requireAlt || this.altDown) {
+        this.props.onChange(this.props.id, event.target.value)
       }
+    } else if (/^[ -~]$/.test(event.key)) {
+      this.setState({
+        color: 'pink'
+      })
     }
   }
 
@@ -23,24 +34,16 @@ module.exports = class InputField extends React.Component {
   }
 
   render() {
-    return this.props.multiline ? (
-      <textarea
+    return (
+      <input
         id={this.props.id}
-        key={highWater++}
+        style={{ width: this.props.width }}
+        type="text"
         defaultValue={this.props.value}
         onKeyDown={this.onKeyDown.bind(this)}
         onKeyUp={this.onKeyUp.bind(this)}
+        style={{ backgroundColor: this.state.color }}
       />
-    ) : (
-        <input
-          id={this.props.id}
-          key={highWater++}
-          style={{ width: this.props.width }}
-          type="text"
-          defaultValue={this.props.value}
-          onKeyDown={this.onKeyDown.bind(this)}
-          onKeyUp={this.onKeyUp.bind(this)}
-        />
     )
   }
 }

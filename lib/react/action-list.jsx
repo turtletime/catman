@@ -5,29 +5,37 @@ module.exports = class ActionList extends React.Component {
   onAddAction(actionIndex) {
     const copy = _.clone(this.props.value)
     copy.splice(actionIndex, 0, { action: '', args: [] })
-    this.props.onChanged(this.props.id, copy)
+    this.props.onChange(this.props.id, copy)
   }
 
-  onChangeAction() { }
+  onChangeAction(actionIndex, id, value) {
+    const copy = _.clone(this.props.value)
+    copy[actionIndex].action = value
+    this.props.onChange(this.props.id, copy)
+  }
 
   onRemoveAction(actionIndex) {
     const copy = _.clone(this.props.value)
     copy.splice(actionIndex, 1)
-    this.props.onChanged(this.props.id, copy)
+    this.props.onChange(this.props.id, copy)
   }
 
   onAddArgument(actionIndex, argIndex) {
     const copy = _.clone(this.props.value)
     copy[actionIndex].args.splice(argIndex, 0, '')
-    this.props.onChanged(this.props.id, copy)
+    this.props.onChange(this.props.id, copy)
   }
 
-  onChangeArgument() { }
+  onChangeArgument(actionIndex, argIndex, id, value) {
+    const copy = _.clone(this.props.value)
+    copy[actionIndex].args[argIndex] = value
+    this.props.onChange(this.props.id, copy)
+  }
 
   onRemoveArgument(actionIndex, argIndex) {
     const copy = _.clone(this.props.value)
-    copy[actionIndex].args.splice(argIndex, 0)
-    this.props.onChanged(this.props.id, copy)
+    copy[actionIndex].args.splice(argIndex, 1)
+    this.props.onChange(this.props.id, copy)
   }
 
   render() {
@@ -38,9 +46,8 @@ module.exports = class ActionList extends React.Component {
           {
             (() => {
               const actionsResult = this.props.value.map((action, actionIndex) => (
-                <li>
+                <li key={`${this.props.title}-${actionIndex}`}>
                   <InputField
-                    id={`${this.props.title}-${actionIndex}`}
                     width={100}
                     value={action.action}
                     onChange={this.onChangeAction.bind(this, actionIndex)}
@@ -54,9 +61,8 @@ module.exports = class ActionList extends React.Component {
                           action.args = [action.args]
                         }
                         const argsResult = action.args.map((arg, argIndex) => (
-                          <li>
+                          <li key={`${this.props.title}-${actionIndex}-${argIndex}`}>
                             <InputField
-                              id={`${this.props.title}-${actionIndex}-${argIndex}`}
                               width={200}
                               value={arg}
                               onChange={this.onChangeArgument.bind(this, actionIndex, argIndex)}

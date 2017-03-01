@@ -286,7 +286,7 @@ class LevelEditor extends React.Component {
           />}
           {this.state.selectedEntity !== null && <Entity
             data={this.state.selectedEntity}
-            onChanged={this.onEntityChanged.bind(this)}
+            onChange={this.onEntityChanged.bind(this)}
           />}
           <div id="level-editor-message" style={{ fontSize: 20 }}>{this.state.message}</div>
         </div>

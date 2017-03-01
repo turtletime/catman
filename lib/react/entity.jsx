@@ -16,20 +16,20 @@ module.exports = class Entity extends React.Component {
             id="name"
             type="text"
             value={entity.name}
-            onChanged={this.props.onChanged}
+            onChange={this.props.onChange}
             width={100}
           /></li>
           <li><b>Position: </b>
             <InputField
               id="position-x"
               value={entity.position.x}
-              onChanged={this.props.onChanged}
+              onChange={this.props.onChange}
               width={25}
             />,
             <InputField
               id="position-y"
               value={entity.position.y}
-              onChanged={this.props.onChanged}
+              onChange={this.props.onChange}
               width={25}
             />
           </li>
@@ -37,20 +37,20 @@ module.exports = class Entity extends React.Component {
             <InputField
               id="size-w"
               value={entity.size.w}
-              onChanged={this.props.onChanged}
+              onChange={this.props.onChange}
               width={25}
             />,
             <InputField
               id="size-h"
               value={entity.size.h}
-              onChanged={this.props.onChanged}
+              onChange={this.props.onChange}
               width={25}
             />
           </li>
           <li><b>Tags: </b><InputField
             id="tags"
             value={JSON.stringify(entity.tags, null, 2)}
-            onChanged={this.props.onChanged}
+            onChange={this.props.onChange}
             width={100}
           /></li>
           <li><b>Events:</b></li>
@@ -60,7 +60,7 @@ module.exports = class Entity extends React.Component {
                 title={key}
                 id={`event-${key}`}
                 value={displayEvents[key]}
-                onChanged={this.props.onChanged}
+                onChange={this.props.onChange}
               /></li>)
             })}
           </ul>
