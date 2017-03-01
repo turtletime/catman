@@ -17,22 +17,27 @@ class LevelEditorList extends React.Component {
       <div id={this.props.id}>
         <h1>{this.props.title}</h1>
         <Griddle
-          data={this.props.data.map(id => Object.keys(this.props.controls).reduce((prev, key) => {
-            prev[key] = { display: key, id: id }
-            return prev
-          }, { name: id }))}
+          data={this.props.data.map(id => ({ name: id, actions: id }))}
           plugins={[plugins.LocalPlugin]}
         >
           <RowDefinition>
-            {Object.keys(this.props.controls).map(key => (
+              <ColumnDefinition id="name" />
               <ColumnDefinition
-                id={key}
-                key={key}
+                id="actions"
                 customComponent={({value}) =>
-                  <a onClick={() => this.props.controls[key](value.get('id'))}>[{value.get('display')}]</a>
+                  <div>
+                    [{Object.keys(this.props.controls).map(key => (
+                      <a
+                        key={key}
+                        onClick={() => this.props.controls[key].cb(value)}
+                        style={{ color: this.props.controls[key].color || 'black' }}
+                      >
+                        {key}
+                      </a>
+                    ))}]
+                  </div>
                 }
               />
-            )).concat(<ColumnDefinition id="name" />)}
           </RowDefinition>
         </Griddle>
       </div>
@@ -62,7 +67,7 @@ class LevelEditor extends React.Component {
     }
   }
 
-  onClickRoomName(roomName) {
+  onEditRoom(roomName) {
     // Clear previous stuff
     if (this.props.gameModule.state.Action.onCursorDown) {
       this.props.gameModule.events.input.removeListener('cursorDown', this.props.gameModule.state.Action.onCursorDown)
@@ -90,7 +95,7 @@ class LevelEditor extends React.Component {
     })  
   }
 
-  onClickEntityName(entityName) {
+  onEditEntity(entityName) {
     if (this.state.selectedEntity && entityName === this.state.selectedEntity.name) {
       this.setState({
         selectedRoom: this.state.selectedRoom,
@@ -167,19 +172,26 @@ class LevelEditor extends React.Component {
     this.props.gameModule.logger.warn(`${value}: Not a valid value for ${prop}`)
   }
 
-  onClickTemplateName(templateName) {
+  onAddEntity(templateName) {
     if (!this.state.selectedRoom) {
       return
     } else {
-      const def = this.props.gameModule.rom.entities.find(def => def.id === templateName)
+      const game = this.props.gameModule
+      const def = game.rom.entities.find(def => def.id === templateName)
       if (def) {
-        this.props.gameModule.invoke('create-entity',
-          extend(true, {}, this.props.gameModule.instantiate('entity'), def, { name: templateName })).then(entity => {
-            this.props.gameModule.state.scene.entities.push(entity)
+        game.invoke('create-entity',
+          extend(true, {}, game.instantiate('entity'), def, {
+            name: `${templateName}.${Date.now()}`,
+            position: {
+              x: game.state.scene.camera.toFieldX(game.state.graphics.dimensions.x / 2),
+              y: game.state.scene.camera.toFieldY(game.state.graphics.dimensions.y / 2)
+            }
+          })).then(entity => {
+            game.state.scene.entities.push(entity)
             this.forceUpdate()
           })
       } else {
-        this.props.gameModule.logger.error('Entry in template name doesn\'t exist in ROM')
+        game.logger.error('Entry in template name doesn\'t exist in ROM')
       }
     }
   }
@@ -219,13 +231,17 @@ class LevelEditor extends React.Component {
             title="Rooms"
             id="room-list"
             data={this.props.gameModule.rom.rooms.map(room => room.name)}
-            controls={{ edit: this.onClickRoomName.bind(this) }}
+            controls={{
+              edit: { cb: this.onEditRoom.bind(this), color: 'blue' }
+            }}
           />
           {this.state.selectedRoom !== null && <LevelEditorList
             title={`Entities in room "${this.state.selectedRoom.name}"`}
             id="entity-list"
             data={this.props.gameModule.state.scene.entities.map(entity => entity.name)}
-            controls={{ edit: this.onClickEntityName.bind(this) }}
+            controls={{
+              edit: { cb: this.onEditEntity.bind(this), color: 'blue' }
+            }}
           />}
           {this.state.selectedEntity !== null && <Entity
             data={this.state.selectedEntity}
@@ -238,7 +254,9 @@ class LevelEditor extends React.Component {
             title="Templates"
             id="template-list"
             data={this.props.gameModule.rom.entities.map(entity => entity.id)}
-            controls={{ add: this.onClickTemplateName.bind(this) }}
+            controls={{
+              add: { cb: this.onAddEntity.bind(this), color: 'green' }
+            }}
           />
         </div>
       </div>
@@ -255,12 +273,20 @@ module.exports = class extends Action {
       <LevelEditor gameModule={this} />,
       document.getElementById('level-editor-supplement')
     )
+    const joy = await this.invoke('create-joy')
+    this.loop.schedule('camera-movement', () => {
+      this.state.scene.camera.x -= joy.x * 2
+      this.state.scene.camera.y -= joy.y * 2
+      this.events.camera.emit('changed')
+    })
     await this.invoke('wait-on-input', [
       {
         key: 'select',
         cb: () => false // TODO Can't go back yet because state wasn't saved properly
       }
     ])
+    this.loop.unschedule('camera-movement')
+    await this.invoke('destroy-joy', joy)
     if (!previouslyEnabledFootprint) {
       await this.invoke('disable-footprints')
     }
