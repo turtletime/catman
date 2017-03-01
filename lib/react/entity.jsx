@@ -1,4 +1,5 @@
 const InputField = require('./input-field.jsx')
+const ActionList = require('./action-list.jsx')
 
 module.exports = class Entity extends React.Component {
   render() {
@@ -55,11 +56,11 @@ module.exports = class Entity extends React.Component {
           <li><b>Events:</b></li>
           <ul>
             {Object.keys(displayEvents).map(key => {
-              return (<li key={key}>{key}: <InputField
+              return (<li key={key}><ActionList
+                title={key}
                 id={`event-${key}`}
-                value={JSON.stringify(displayEvents[key], null, 2)}
+                value={displayEvents[key]}
                 onChanged={this.props.onChanged}
-                multiline={true}
               /></li>)
             })}
           </ul>

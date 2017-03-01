@@ -177,8 +177,7 @@ class LevelEditor extends React.Component {
         if (prop.startsWith('event-')) {
           const eventName = prop.split('-')[1]
           try {
-            const newEvent = JSON.parse(`{"value":${value}}`).value
-            this.state.selectedEntity.events[eventName] = newEvent
+            this.state.selectedEntity.events[eventName] = value
             this.setState(prevState => ({
               selectedRoom: prevState.selectedRoom,
               selectedEntity: prevState.selectedEntity,
@@ -291,17 +290,17 @@ class LevelEditor extends React.Component {
           />}
           <div id="level-editor-message" style={{ fontSize: 20 }}>{this.state.message}</div>
         </div>
-        <div style={{ flexGrow: 1 }}>
+        {this.state.selectedRoom !== null && <div style={{ flexGrow: 1 }}>
           <button onClick={this.onClickSave.bind(this)}>"Save"</button>
           <LevelEditorList
             title="Templates"
             id="template-list"
             data={this.props.gameModule.rom.entities.map(entity => entity.id)}
             controls={{
-              add: { cb: this.onAddEntity.bind(this), color: 'green' }
+              'add to room': { cb: this.onAddEntity.bind(this), color: 'green' }
             }}
           />
-        </div>
+        </div>}  
       </div>
     )
   }
