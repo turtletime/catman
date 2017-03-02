@@ -1,5 +1,3 @@
-let highWater = 0
-
 module.exports = class InputField extends React.Component {
   constructor(props) {
     super(props)
@@ -14,16 +12,16 @@ module.exports = class InputField extends React.Component {
     if (event.key === 'Alt') {
       this.altDown = true
     } else if (event.key === 'Enter') {
-      this.setState({
+      this.setState(prevState => ({
         color: 'white'
-      })
+      }))
       if (!this.props.requireAlt || this.altDown) {
         this.props.onChange(this.props.id, event.target.value)
       }
     } else if (/^[ -~]$/.test(event.key)) {
-      this.setState({
+      this.setState(prevState => ({
         color: 'pink'
-      })
+      }))
     }
   }
 
@@ -33,6 +31,8 @@ module.exports = class InputField extends React.Component {
     }
   }
 
+  onChange(event) {}
+
   render() {
     return (
       <input
@@ -40,6 +40,7 @@ module.exports = class InputField extends React.Component {
         style={{ width: this.props.width }}
         type="text"
         defaultValue={this.props.value}
+        onChange={this.onChange.bind(this)}
         onKeyDown={this.onKeyDown.bind(this)}
         onKeyUp={this.onKeyUp.bind(this)}
         style={{ backgroundColor: this.state.color }}
