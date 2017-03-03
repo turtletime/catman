@@ -4,13 +4,21 @@ const inRectangle = require('../util/math-utils.js').inRectangle
 const Entity = require('./entity.jsx')
 const LevelEditorList = require('./level-editor-list.jsx')
 
+const CURSOR_DOWN = Symbol('onCursorDown')
+const CURSOR_MOVE = Symbol('onCursorMove')
+const CURSOR_UP = Symbol('onCursorUp')
+
 module.exports = class EntityList extends React.Component {
   constructor(props) {
     super(props)
+    this.cursorOffset = { valid: false, x: 0, y: 0 }
     this.state = {
       selectedEntity: null,
       message: '' //TODO remove
     }
+    this[CURSOR_DOWN] = this.onCursorDown.bind(this)
+    this[CURSOR_MOVE] = this.onCursorMove.bind(this)
+    this[CURSOR_UP] = this.onCursorUp.bind(this)
   }
 
   onCursorDown(x, y) {
@@ -19,6 +27,9 @@ module.exports = class EntityList extends React.Component {
     const foundEntity = this.props.gameModule.state.scene.entities.find((entity) =>
       inRectangle(x, y, entity.position.x, entity.position.y, entity.size.w, entity.size.h))
     if (foundEntity) {
+      this.cursorOffset.valid = true
+      this.cursorOffset.x = foundEntity.position.x - x
+      this.cursorOffset.y = foundEntity.position.y - y
       this.setState(prevState => ({
         selectedEntity: foundEntity,
         message: ''
@@ -26,14 +37,31 @@ module.exports = class EntityList extends React.Component {
     }
   }
 
+  onCursorMove(x, y) {
+    if (!this.cursorOffset.valid || !this.state.selectedEntity) {
+      return
+    }
+    x = this.props.gameModule.state.scene.camera.toFieldX(x)
+    y = this.props.gameModule.state.scene.camera.toFieldY(y)
+    this.state.selectedEntity.position.x = this.cursorOffset.x + x
+    this.state.selectedEntity.position.y = this.cursorOffset.y + y
+    this.forceUpdate()
+  }
+
+  onCursorUp(x, y) {
+    this.cursorOffset.valid = false
+  }
+
   componentDidMount() {
-    this.props.gameModule.state.Action.onCursorDown = this.onCursorDown.bind(this)
-    this.props.gameModule.events.input.on('cursorDown', this.props.gameModule.state.Action.onCursorDown)
+    this.props.gameModule.events.input.on('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.on('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.on('cursorUp', this[CURSOR_UP])
   }
 
   componentWillUnmount() {
-    this.props.gameModule.events.input.removeListener('cursorDown', this.props.gameModule.state.Action.onCursorDown)
-    delete this.props.gameModule.state.Action.onCursorDown
+    this.props.gameModule.events.input.removeListener('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.removeListener('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.removeListener('cursorUp', this[CURSOR_UP])
   }
 
   onEditEntity(entityName) {
@@ -155,7 +183,7 @@ module.exports = class EntityList extends React.Component {
           />
           [<a style={{ color: 'green' }} onClick={this.onAddEntity.bind(this, 'empty')}>add empty entity</a>]
           {this.state.selectedEntity !== null && <Entity
-            key={this.state.selectedEntity.name}
+            key={`${this.state.selectedEntity.name}-${this.state.selectedEntity.x}-${this.state.selectedEntity.y}`}
             data={this.state.selectedEntity}
             onChange={this.onEntityChanged.bind(this)}
           />}

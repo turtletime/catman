@@ -22,12 +22,14 @@ module.exports = class Entity extends React.Component {
           <li><b>Position: </b>
             <InputField
               id="position-x"
+              key={'x' + entity.position.x}
               value={entity.position.x}
               onChange={this.props.onChange}
               width={25}
             />,
             <InputField
               id="position-y"
+              key={'y' + entity.position.y}
               value={entity.position.y}
               onChange={this.props.onChange}
               width={25}
