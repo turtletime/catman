@@ -4,34 +4,102 @@ const inRectangle = require('../util/math-utils.js').inRectangle
 const Perimeter = require('./perimeter.jsx')
 const LevelEditorList = require('./level-editor-list.jsx')
 
+const CURSOR_DOWN = Symbol('onCursorDown')
+const CURSOR_MOVE = Symbol('onCursorMove')
+const CURSOR_UP = Symbol('onCursorUp')
+
+const getCorners = p => [
+  { x: p.x - p.width / 2, y: p.y - p.height / 2 },
+  { x: p.x + p.width / 2, y: p.y - p.height / 2 },
+  { x: p.x + p.width / 2, y: p.y + p.height / 2 },
+  { x: p.x - p.width / 2, y: p.y + p.height / 2 }
+]
+
 module.exports = class PerimeterList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       selectedPerimeter: null
     }
+    this.closestCorner = -1
+    this.cursorOffset = { valid: false, x: 0, y: 0 }
+    this[CURSOR_DOWN] = this.onCursorDown.bind(this)
+    this[CURSOR_MOVE] = this.onCursorMove.bind(this)
+    this[CURSOR_UP] = this.onCursorUp.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.gameModule.events.input.on('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.on('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.on('cursorUp', this[CURSOR_UP])
+  }
+
+  componentWillUnmount() {
+    this.props.gameModule.events.input.removeListener('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.removeListener('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.removeListener('cursorUp', this[CURSOR_UP])
   }
 
   onCursorDown(x, y) {
     x = this.props.gameModule.state.scene.camera.toFieldX(x)
     y = this.props.gameModule.state.scene.camera.toFieldY(y)
-    const foundPerimeter = this.props.gameModule.state.scene.perimeters.find((p) =>
+    if (this.state.selectedPerimeter) {
+      const corners = getCorners(this.state.selectedPerimeter)
+      this.closestCorner = corners
+        .map(corner => Math.abs(corner.x - x) + Math.abs(corner.y - y))
+        .reduce(
+          (prev, curr, index) => {
+            if (curr < prev.value) {
+              prev.value = curr
+              prev.index = index
+            }
+            return prev
+          }, { index: -1, value: 10 }
+        ).index
+      if (this.closestCorner !== -1) {
+        this.cursorOffset.valid = true
+        return
+      }
+    }
+    const foundPerimeter = this.props.gameModule.state.scene.perimeters.find(p =>
       inRectangle(x, y, p.x, p.y, p.width, p.height))
     if (foundPerimeter) {
+      this.cursorOffset.valid = true
+      this.cursorOffset.x = foundPerimeter.x - x
+      this.cursorOffset.y = foundPerimeter.y - y
       this.setState(prevState => ({
-        selectedPerimeter: foundPerimeter
+        selectedPerimeter: foundPerimeter,
+        message: ''
       }))
     }
   }
 
-  componentDidMount() {
-    this.props.gameModule.state.Action.onCursorDown = this.onCursorDown.bind(this)
-    this.props.gameModule.events.input.on('cursorDown', this.props.gameModule.state.Action.onCursorDown)
+  onCursorMove(x, y) {
+    if (!this.cursorOffset.valid || !this.state.selectedPerimeter) {
+      // console.log(x, y, this.cursorOffset.valid, this.state.selectedPerimeter)
+      return
+    }
+    x = this.props.gameModule.state.scene.camera.toFieldX(x)
+    y = this.props.gameModule.state.scene.camera.toFieldY(y)
+    if (this.closestCorner == -1) {
+      this.state.selectedPerimeter.x = this.cursorOffset.x + x
+      this.state.selectedPerimeter.y = this.cursorOffset.y + y
+    } else {
+      // dragging a corner
+      // keep the opposite corner in place
+      const oppositeCorner = getCorners(this.state.selectedPerimeter)[(this.closestCorner + 2) % 4]
+      // set position as middle and width/height accordingly
+      this.state.selectedPerimeter.x = (x + oppositeCorner.x) / 2
+      this.state.selectedPerimeter.y = (y + oppositeCorner.y) / 2
+      this.state.selectedPerimeter.width = Math.abs(oppositeCorner.x - x)
+      this.state.selectedPerimeter.height = Math.abs(oppositeCorner.y - y)
+    }  
+    this.forceUpdate()
   }
 
-  componentWillUnmount() {
-    this.props.gameModule.events.input.removeListener('cursorDown', this.props.gameModule.state.Action.onCursorDown)
-    delete this.props.gameModule.state.Action.onCursorDown
+  onCursorUp(x, y) {
+    this.cursorOffset.valid = false
+    this.closestCorner = -1
   }
 
   onEditPerimeter(indexString) {

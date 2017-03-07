@@ -114,13 +114,9 @@ class LevelEditor extends React.Component {
   }
 }
 
-module.exports = class extends Action {
-  async execute() {
-    const previouslyEnabledFootprint = !!this.state.footprint
+module.exports = {
+  'level-editor': async function () {
     await this.invoke('enable-footprints')
-    const roomName = this.state.scene.room
-    await this.invoke('clear-room')
-    await this.invoke('load-room', roomName)
     ReactDOM.render(
       <LevelEditor gameModule={this} />,
       document.getElementById('level-editor-supplement')
@@ -134,7 +130,7 @@ module.exports = class extends Action {
     await this.invoke('wait-on-input', [
       {
         key: 'select',
-        cb: () => false // TODO Can't go back yet because state wasn't saved properly
+        cb: () => false
       }
     ])
     this.loop.unschedule('camera-movement')

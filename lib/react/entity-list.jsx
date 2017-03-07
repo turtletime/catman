@@ -21,6 +21,18 @@ module.exports = class EntityList extends React.Component {
     this[CURSOR_UP] = this.onCursorUp.bind(this)
   }
 
+  componentDidMount() {
+    this.props.gameModule.events.input.on('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.on('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.on('cursorUp', this[CURSOR_UP])
+  }
+
+  componentWillUnmount() {
+    this.props.gameModule.events.input.removeListener('cursorDown', this[CURSOR_DOWN])
+    this.props.gameModule.events.input.removeListener('cursorMove', this[CURSOR_MOVE])
+    this.props.gameModule.events.input.removeListener('cursorUp', this[CURSOR_UP])
+  }
+
   onCursorDown(x, y) {
     x = this.props.gameModule.state.scene.camera.toFieldX(x)
     y = this.props.gameModule.state.scene.camera.toFieldY(y)
@@ -50,18 +62,6 @@ module.exports = class EntityList extends React.Component {
 
   onCursorUp(x, y) {
     this.cursorOffset.valid = false
-  }
-
-  componentDidMount() {
-    this.props.gameModule.events.input.on('cursorDown', this[CURSOR_DOWN])
-    this.props.gameModule.events.input.on('cursorMove', this[CURSOR_MOVE])
-    this.props.gameModule.events.input.on('cursorUp', this[CURSOR_UP])
-  }
-
-  componentWillUnmount() {
-    this.props.gameModule.events.input.removeListener('cursorDown', this[CURSOR_DOWN])
-    this.props.gameModule.events.input.removeListener('cursorMove', this[CURSOR_MOVE])
-    this.props.gameModule.events.input.removeListener('cursorUp', this[CURSOR_UP])
   }
 
   onEditEntity(entityName) {

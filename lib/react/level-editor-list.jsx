@@ -3,10 +3,6 @@ const { RowDefinition, ColumnDefinition } = require('griddle-react')
 const plugins = require('griddle-react').plugins
 
 module.exports = class LevelEditorList extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     return (
       <div id={this.props.id}>

@@ -22,7 +22,11 @@
       > Yes
         - (You hold the axe up.)
         - (The axe begins to glow. It feels hot in your hands.)
-        * remove-entity no-good-tree
+        * remove-entity no-good-tree flashily
         - (The tree mysteriously disappeared.)
         * set-progress tree.disappeared 1
       > No
+
+# seeing-diner
+  - Seeing the diner, your heart growls and your stomach flutters.
+  * remove-entity trigger
