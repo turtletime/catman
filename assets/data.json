@@ -105,6 +105,20 @@
     {
       "id": "home",
       "size": { "w": 109, "h": 40 },
+      "cavities": [
+        {
+          "position": { "x": -24, "y": 12 },
+          "events": {
+            "interact": [
+              {
+                "action": "dialog",
+                "args": [ "It's the door to your house." ]
+              }
+            ],
+            "collide": []
+          }
+        }
+      ],
       "appearance": { "def": "h-home" }
     },
     {
@@ -153,7 +167,10 @@
     { "id": "h-diner" },
     { "id": "h-dogs" },
     { "id": "h-firehouse" },
-    { "id": "h-home" },
+    {
+      "id": "h-home",
+      "yOffset": 10
+    },
     { "id": "h-store" },
     { "id": "h-tree-1" },
     { "id": "h-tree-2" }

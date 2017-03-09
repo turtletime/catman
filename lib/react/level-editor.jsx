@@ -30,11 +30,9 @@ module.exports = class extends React.Component {
   }
 
   onEditRoom(prop, roomName) {
-    let clear
+    let clear = Promise.resolve()
     if (this.state.selectedRoom) {
       clear = this.props.gameModule.invoke('save-room').then(() => this.props.gameModule.invoke('clear-room'))
-    } else {
-      clear = this.props.gameModule.invoke('clear-room')
     }
     clear.then(() => {
       //
