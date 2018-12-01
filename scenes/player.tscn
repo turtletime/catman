@@ -1,0 +1,97 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scripts/player.gd" type="Script" id=1]
+[ext_resource path="res://img/catman.png" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[sub_resource type="CircleShape2D" id=2]
+
+custom_solver_bias = 0.0
+radius = 10.0
+
+[node name="player" type="Node2D" index="0"]
+
+script = ExtResource( 1 )
+_sections_unfolded = [ "Transform", "Z Index" ]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="sprite" type="Sprite" parent="." index="0"]
+
+texture = ExtResource( 2 )
+vframes = 4
+hframes = 3
+_sections_unfolded = [ "Animation", "Transform" ]
+
+[node name="Camera2D" type="Camera2D" parent="sprite" index="0"]
+
+visible = false
+anchor_mode = 1
+rotating = false
+current = true
+zoom = Vector2( 0.5, 0.5 )
+limit_left = -10000000
+limit_top = -10000000
+limit_right = 10000000
+limit_bottom = 10000000
+limit_smoothed = false
+drag_margin_h_enabled = true
+drag_margin_v_enabled = true
+smoothing_enabled = false
+smoothing_speed = 5.0
+offset_v = 0.0
+offset_h = 0.0
+drag_margin_left = 0.2
+drag_margin_top = 0.2
+drag_margin_right = 0.2
+drag_margin_bottom = 0.2
+editor_draw_screen = true
+editor_draw_limits = false
+editor_draw_drag_margin = false
+_sections_unfolded = [ "Pause", "Smoothing", "Transform" ]
+
+[node name="body" type="KinematicBody2D" parent="." index="1"]
+
+editor/display_folded = true
+input_pickable = false
+collision_layer = 1
+collision_mask = 1
+collision/safe_margin = 0.08
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="body" index="0"]
+
+position = Vector2( -0.291611, 4.35098 )
+scale = Vector2( 0.553705, 0.240528 )
+shape = SubResource( 1 )
+
+[node name="cue" type="Node2D" parent="." index="2"]
+
+[node name="area" type="Area2D" parent="cue" index="0"]
+
+position = Vector2( 0, 0.572693 )
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+_sections_unfolded = [ "Collision", "Transform" ]
+
+[node name="shape0" type="CollisionShape2D" parent="cue/area" index="0"]
+
+position = Vector2( 0, -0.474243 )
+scale = Vector2( 0.1, 0.1 )
+shape = SubResource( 2 )
+_sections_unfolded = [ "Transform" ]
+
+[connection signal="area_entered" from="cue/area" to="." method="_on_area_area_entered"]
+
+[connection signal="area_exited" from="cue/area" to="." method="_on_area_area_exited"]
+
+

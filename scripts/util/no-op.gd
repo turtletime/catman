@@ -1,0 +1,2 @@
+func call():
+  pass
